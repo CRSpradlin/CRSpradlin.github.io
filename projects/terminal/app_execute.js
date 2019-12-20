@@ -47,10 +47,8 @@ function runApp(appString){
         }
     }
     else if(appName=="echo"){
+        console.log(appStringArray);
         runApp_echo(appStringArray);
-    }
-    else if(appName=="server"){
-        runApp_server(appStringArray);
     }
     else{
         runApp_errorMsg("Could not find command, '"+ appName +"' try typing help for a list of commands.");

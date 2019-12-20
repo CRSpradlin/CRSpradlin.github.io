@@ -1,5 +1,5 @@
 let server_name = "server@crspradlin.org";
-let blink;
+
 
 let Typer={
     speed: 5,
@@ -9,16 +9,9 @@ let Typer={
     queue: new Array(),
     init: function(){
         document.addEventListener("keydown", gatherInput);
+        blink = setInterval(function(){Typer.updLstChr();},500);
         output = setInterval(function() {
             if(Typer.queue.length>0){
-                if(blink){
-                    console.log("clearing blink interval");
-                    clearInterval(blink);
-                    let cont = $("#console").html();
-                    if(cont.substring(cont.length-1, cont.length)=="|")
-                        $("#console").html($("#console").html().substring(0, cont.length-1));
-                    blink = null;
-                }
                 if(Typer.queue[0].length>1){
                     let value = Typer.queue.shift().substring(1);
                     if(value=="input"){
@@ -36,11 +29,6 @@ let Typer={
                         $("#"+Typer.currentSpan).html($("#"+Typer.currentSpan).html() + Typer.queue.shift());
                     }
                     window.scrollTo(0, document.body.scrollHeight);
-                }
-            } else {
-                if(!blink){
-                    console.log("activating blink interval.");
-                    blink = setInterval(function(){Typer.updLstChr();},500);
                 }
             }
         }, this.speed);
@@ -60,19 +48,11 @@ let Typer={
         this.add("<span id='"+this.messageCount+"' class='"+color+"'></span>");
         this.queue.push("$"+this.messageCount);
         this.messageCount = this.messageCount + 1;
+        console.log("adding something to the console!");
         for(i=0;i<str.length;i++){
             this.queue.push(str[i]+"");
         }
         return false;
-    },
-    lag: function(delay){
-        str = "";
-        numChars = delay/Typer.speed;
-        for(let i=0; i<numChars; i++){
-            str = str + "#";
-        }
-        Typer.write(str);
-        $("#console").find("span").last().css("display", 'none');
     },
     awaitInput: function(){
         this.newLine();
@@ -108,9 +88,11 @@ function gatherInput(e){
         }
         else if(e.key == "ArrowUp"){
             runApp_arrows("up");
+	    e.preventDefault();
         }
         else if(e.key == "ArrowDown"){
             runApp_arrows("down");
+ 	    e.preventDefault();
         }
         else if((e.key+"").length>1){}
         else if(e.key == " "){
